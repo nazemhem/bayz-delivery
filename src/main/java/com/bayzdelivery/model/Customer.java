@@ -11,12 +11,12 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "person")
-public class Person implements Serializable{
+@Table(name = "customer")
+public class Customer implements Serializable{
 
   private static final long serialVersionUID = 432154291451321L;
 
-  public Person() {}
+  public Customer() {}
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -84,7 +84,7 @@ public class Person implements Serializable{
       return false;
     if (getClass() != obj.getClass())
       return false;
-    Person other = (Person) obj;
+    Customer other = (Customer) obj;
     if (email == null) {
       if (other.email != null)
         return false;
@@ -110,7 +110,7 @@ public class Person implements Serializable{
 
   @Override
   public String toString() {
-    return "Person [id=" + id + ", name=" + name + ", email=" + email + ", registrationNumber=" + registrationNumber + "]";
+    return "Customer [id=" + id + ", name=" + name + ", email=" + email + ", registrationNumber=" + registrationNumber + "]";
   }
 
 
