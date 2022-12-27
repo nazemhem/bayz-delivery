@@ -5,9 +5,11 @@ import com.bayzdelivery.repositories.CourierRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CourierServiceImpl implements CourierService {
@@ -23,6 +25,17 @@ public class CourierServiceImpl implements CourierService {
         List<Courier> courierList = new ArrayList<>();
         courierRepository.findAll().forEach(courierList::add);
         return courierList;
+    }
+
+    @Override
+    public List<Courier> getAll(String stat, Instant st, Instant et, Integer count) {
+        if (stat != null) {
+            if (count == null) count = 3;
+            if (stat.equals("most_commission")) {
+                return courierRepository.findByMostCommission(st, et).stream().limit(count).collect(Collectors.toList());
+            } //can add other stats later on
+        }
+        return getAll();
     }
 
     @Override
