@@ -26,6 +26,7 @@ public class DeliveryController {
         Delivery delivery = deliveryService.findById(deliveryId);
         if (delivery != null)
             return ResponseEntity.ok(delivery);
+        System.out.println("delivery is null? " + (delivery == null));
         return ResponseEntity.notFound().build();
     }
 }

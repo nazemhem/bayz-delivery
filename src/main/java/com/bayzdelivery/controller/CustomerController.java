@@ -18,17 +18,17 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
 
-    @PostMapping(path = "/api/customer")
+    @PostMapping(path = "/customer")
     public ResponseEntity<Customer> register(@RequestBody Customer p) {
         return ResponseEntity.ok(customerService.save(p));
     }
 
-    @GetMapping(path = "/api/customer")
+    @GetMapping(path = "/customer")
     public ResponseEntity<List<Customer>> getAllCustomers() {
         return ResponseEntity.ok(customerService.getAll());
     }
 
-    @GetMapping(path = "/api/customer/{customer_id}")
+    @GetMapping(path = "/customer/{customer_id}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable(name = "customer_id", required = true) Long customerId) {
         Customer customer = customerService.findById(customerId);
         if (customer != null) {

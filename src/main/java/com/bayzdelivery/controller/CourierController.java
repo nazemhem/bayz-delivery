@@ -20,17 +20,17 @@ public class CourierController {
         this.courierService = courierService;
     }
 
-    @PostMapping("/api/courier")
+    @PostMapping("/courier")
     public ResponseEntity<Courier> register(Courier courier) {
         return ResponseEntity.ok(courierService.save(courier));
     }
 
-    @GetMapping("/api/courier")
+    @GetMapping("/courier")
     public ResponseEntity<List<Courier>> getAll() {
         return ResponseEntity.ok(courierService.getAll());
     }
 
-    @GetMapping("/api/courier/{courier_id}")
+    @GetMapping("/courier/{courier_id}")
     public ResponseEntity<Courier> getCourierById(@PathVariable("courier_id") Long courierId) {
         Courier courier = courierService.findById(courierId);
         if (courier != null) return ResponseEntity.ok(courier);
