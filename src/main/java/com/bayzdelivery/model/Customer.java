@@ -20,18 +20,18 @@ public class Customer implements Serializable{
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  Long id;
+  private Long id;
 
   @Column(name = "name")
-  String name;
+  private String name;
 
   @NotNull
   @Email
   @Column(name = "email")
-  String email;
+  private String email;
 
   @Column(name = "registration_number")
-  String registrationNumber;
+  private String registrationNumber;
 
   public Long getId() {
     return id;

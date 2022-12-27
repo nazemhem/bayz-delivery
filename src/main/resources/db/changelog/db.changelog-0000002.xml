@@ -30,7 +30,7 @@
             <column name="end_time" type="TIMESTAMP"/>
             <column name="distance" type="BIGINT"/>
             <column name="price" type="BIGINT"/>
-            <column name="comission" type="BIGINT"/>
+            <column name="commission" type="BIGINT"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="courier_id"
                                  baseTableName="delivery"

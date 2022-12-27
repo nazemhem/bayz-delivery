@@ -20,24 +20,24 @@ public class Delivery implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @NotNull
     @Column(name = "start_time")
-    Instant startTime;
+    private Instant startTime;
 
     @NotNull
     @Column(name = "end_time")
-    Instant endTime;
+    private Instant endTime;
 
     @Column(name = "distance")
-    Long distance;
+    private Long distance;
 
     @Column(name = "price")
-    Long price;
+    private Long price;
 
-    @Column(name = "comission")
-    Long comission;
+    @Column(name = "commission")
+    private Long commission;
 
     @ManyToOne
     @JoinColumn(name = "courier_id", referencedColumnName = "id")
@@ -87,12 +87,12 @@ public class Delivery implements Serializable {
         this.price = price;
     }
 
-    public Long getComission() {
-        return comission;
+    public Long getCommission() {
+        return commission;
     }
 
-    public void setComission(Long comission) {
-        this.comission = comission;
+    public void setCommission(Long commission) {
+        this.commission = commission;
     }
 
     public Courier getCourier() {
