@@ -1,5 +1,7 @@
 package com.bayzdelivery.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,6 +33,7 @@ public class Customer implements Serializable{
   private String email;
 
   @Column(name = "registration_number")
+  @JsonProperty("registration_number")
   private String registrationNumber;
 
   public Long getId() {

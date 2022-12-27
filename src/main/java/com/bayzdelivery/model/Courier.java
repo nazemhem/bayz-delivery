@@ -1,5 +1,7 @@
 package com.bayzdelivery.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -21,6 +23,7 @@ public class Courier {
     private String email;
 
     @Column(name = "registration_number")
+    @JsonProperty("registration_number")
     private String registrationNumber;
 
 

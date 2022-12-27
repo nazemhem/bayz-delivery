@@ -9,16 +9,24 @@
                 <constraints primaryKey="true" primaryKeyName="pk_customer"/>
             </column>
             <column name="name" type="VARCHAR(255)"/>
-            <column name="email" type="VARCHAR(255)"/>
-            <column name="registration_number" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="registration_number" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
         </createTable>
         <createTable tableName="courier">
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true" primaryKeyName="pk_courier"/>
             </column>
             <column name="name" type="VARCHAR(255)"/>
-            <column name="email" type="VARCHAR(255)"/>
-            <column name="registration_number" type="VARCHAR(255)"/>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="registration_number" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
         </createTable>
         <createTable tableName="delivery">
             <column autoIncrement="true" name="id" type="BIGINT">
@@ -29,8 +37,8 @@
             <column name="start_time" type="TIMESTAMP"/>
             <column name="end_time" type="TIMESTAMP"/>
             <column name="distance" type="BIGINT"/>
-            <column name="price" type="BIGINT"/>
-            <column name="commission" type="BIGINT"/>
+            <column name="price" type="NUMERIC(16, 2)"/>
+            <column name="commission" type="NUMERIC(16, 2)"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="courier_id"
                                  baseTableName="delivery"

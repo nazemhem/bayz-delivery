@@ -1,5 +1,7 @@
 package com.bayzdelivery.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.io.Serializable;
 import java.time.Instant;
 import javax.persistence.Column;
@@ -22,30 +24,32 @@ public class Delivery implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @Column(name = "start_time")
+    @JsonProperty("start_time")
     private Instant startTime;
 
-    @NotNull
     @Column(name = "end_time")
+    @JsonProperty("end_time")
     private Instant endTime;
 
     @Column(name = "distance")
     private Long distance;
 
+    @NotNull
     @Column(name = "price")
-    private Long price;
+    private double price;
 
     @Column(name = "commission")
-    private Long commission;
+    private double commission;
 
     @ManyToOne
     @JoinColumn(name = "courier_id", referencedColumnName = "id")
-    Courier courier;
+    private Courier courier;
 
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
-    Customer customer;
+    private Customer customer;
 
     public Long getId() {
         return id;
@@ -79,19 +83,19 @@ public class Delivery implements Serializable {
         this.distance = distance;
     }
 
-    public Long getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(Long price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public Long getCommission() {
+    public double getCommission() {
         return commission;
     }
 
-    public void setCommission(Long commission) {
+    public void setCommission(double commission) {
         this.commission = commission;
     }
 

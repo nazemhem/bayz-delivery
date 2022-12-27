@@ -1,5 +1,6 @@
 package com.bayzdelivery.service;
 
+import java.time.Instant;
 import java.util.Optional;
 
 import com.bayzdelivery.repositories.DeliveryRepository;
@@ -23,7 +24,6 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     public Delivery findById(Long deliveryId) {
         Optional<Delivery> optionalDelivery = deliveryRepository.findById(deliveryId);
-        System.out.println("DELIVERY: " + optionalDelivery);
         return optionalDelivery.orElse(null);
     }
 }
