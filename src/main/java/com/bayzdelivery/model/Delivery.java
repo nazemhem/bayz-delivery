@@ -1,17 +1,12 @@
 package com.bayzdelivery.model;
 
+import com.bayzdelivery.model.enums.DeliveryStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.Cascade;
 
 import java.io.Serializable;
 import java.time.Instant;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -42,14 +37,27 @@ public class Delivery implements Serializable {
     @Column(name = "commission")
     private double commission;
 
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus status;
+
     @ManyToOne
     @JoinColumn(name = "courier_id", referencedColumnName = "id")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Courier courier;
 
     @NotNull
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
+    @Cascade(org.hibernate.annotations.CascadeType.MERGE)
     private Customer customer;
+
+    public DeliveryStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(DeliveryStatus status) {
+        this.status = status;
+    }
 
     public Long getId() {
         return id;

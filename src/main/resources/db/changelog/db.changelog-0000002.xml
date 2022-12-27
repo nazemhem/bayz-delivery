@@ -39,6 +39,7 @@
             <column name="distance" type="BIGINT"/>
             <column name="price" type="NUMERIC(16, 2)"/>
             <column name="commission" type="NUMERIC(16, 2)"/>
+            <column name="status" type="VARCHAR"/>
         </createTable>
         <addForeignKeyConstraint baseColumnNames="courier_id"
                                  baseTableName="delivery"

@@ -1,24 +1,39 @@
 package com.bayzdelivery.controller;
 
+import com.bayzdelivery.model.Courier;
 import com.bayzdelivery.model.Delivery;
+import com.bayzdelivery.model.enums.DeliveryStatus;
+import com.bayzdelivery.service.CourierService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.bayzdelivery.service.DeliveryService;
+
+import java.util.Arrays;
+import java.util.List;
 
 @RestController
 public class DeliveryController {
 
+    private final DeliveryService deliveryService;
+
+    private final CourierService courierService;
+
     @Autowired
-    DeliveryService deliveryService;
+    public DeliveryController(DeliveryService deliveryService, CourierService courierService) {
+        this.deliveryService = deliveryService;
+        this.courierService = courierService;
+    }
+
+    @GetMapping(path = "/delivery")
+    public ResponseEntity<List<Delivery>> getAll() {
+        return ResponseEntity.ok(deliveryService.getAll());
+    }
 
     @PostMapping(path = "/delivery")
     public ResponseEntity<Delivery> createNewDelivery(@RequestBody Delivery delivery) {
-        return ResponseEntity.ok(deliveryService.save(delivery));
+        return ResponseEntity.ok(deliveryService.createNewDelivery(delivery));
     }
 
     @GetMapping(path = "/delivery/{delivery-id}")
@@ -28,4 +43,33 @@ public class DeliveryController {
             return ResponseEntity.ok(delivery);
         return ResponseEntity.notFound().build();
     }
+
+    @PutMapping(path = "/delivery/{delivery-id}")
+    public ResponseEntity<?> updateDelivery(@PathVariable(name = "delivery-id", required = true) Long deliveryId, @RequestParam("courier_id") Long courierId,
+                                            @RequestParam("status") String status, @RequestParam(value = "distance", required = false) Long distance) {
+        //check if delivery is valid
+        Delivery deliveryDb = deliveryService.findById(deliveryId);
+        if (deliveryDb == null) return ResponseEntity.badRequest().body("Delivery not found");
+        //check if courier is valid
+        Courier courierDb = courierService.findById(courierId);
+        if (courierDb == null) return ResponseEntity.badRequest().body("Courier not found");
+        //check if status is valid
+        DeliveryStatus deliveryStatus = DeliveryStatus.valueOf(status.toUpperCase());
+        if (Arrays.stream(DeliveryStatus.values()).noneMatch(ds -> ds == deliveryStatus))
+            return ResponseEntity.badRequest().body("Status not found.");
+        //check if distance is valid
+        if (deliveryStatus == DeliveryStatus.DELIVERED && (distance == null || distance <= 0))
+            return ResponseEntity.badRequest().body("Distance cannot be less than 0");
+        //check if courier has any other deliveries
+        if (deliveryStatus == DeliveryStatus.PICKED) {
+            if (deliveryService.getAll().stream().anyMatch(delivery -> delivery.getStatus() == DeliveryStatus.PICKED && delivery.getCourier().getId().equals(courierId)))
+                return ResponseEntity.badRequest().body("A courier is not allowed to deliver multiple orders at the same time");
+        }
+
+        Delivery delivery = deliveryService.updateDelivery(deliveryDb, courierDb, deliveryStatus, distance);
+        if (delivery == null)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error has occurred");
+        return ResponseEntity.ok(delivery);
+    }
+
 }
