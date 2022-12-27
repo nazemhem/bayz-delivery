@@ -10,6 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.bayzdelivery.service.DeliveryService;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,14 +45,12 @@ public class DeliveryController {
     @GetMapping(path = "/delivery/{delivery-id}")
     public ResponseEntity<Delivery> getDeliveryById(@PathVariable(name = "delivery-id", required = true) Long deliveryId) {
         Delivery delivery = deliveryService.findById(deliveryId);
-        if (delivery != null)
-            return ResponseEntity.ok(delivery);
+        if (delivery != null) return ResponseEntity.ok(delivery);
         return ResponseEntity.notFound().build();
     }
 
     @PutMapping(path = "/delivery/{delivery-id}")
-    public ResponseEntity<?> updateDelivery(@PathVariable(name = "delivery-id", required = true) Long deliveryId, @RequestParam("courier_id") Long courierId,
-                                            @RequestParam("status") String status, @RequestParam(value = "distance", required = false) Long distance) {
+    public ResponseEntity<?> updateDelivery(@PathVariable(name = "delivery-id", required = true) Long deliveryId, @RequestParam("courier_id") Long courierId, @RequestParam("status") String status, @RequestParam(value = "distance", required = false) Long distance) {
         //check if delivery is valid
         Delivery deliveryDb = deliveryService.findById(deliveryId);
         if (deliveryDb == null) return ResponseEntity.badRequest().body("Delivery not found");
@@ -72,4 +76,23 @@ public class DeliveryController {
         return ResponseEntity.ok(delivery);
     }
 
+
+    @GetMapping(path = "/delivery/stats")
+    public ResponseEntity<?> getDeliveryStat(@RequestParam("stat") String statName,
+                                             @RequestParam(value = "start_time", required = false) String st,
+                                             @RequestParam(value = "end_time", required = false) String et) {
+        Instant startTime = null;
+        Instant endTime = null;
+        try {
+            if (st != null)
+                startTime = LocalDateTime.parse(st, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")).atZone(ZoneId.of("Africa/Cairo")).toInstant();
+            if (et != null)
+                endTime = LocalDateTime.parse(et, DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")).atZone(ZoneId.of("Africa/Cairo")).toInstant();
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.badRequest().body("Invalid time format. Format should be: dd/MM/yyyy HH:mm:ss");
+        }
+        AbstractMap.SimpleEntry<String, String> d = deliveryService.getStat(statName, startTime, endTime);
+        if (d == null) return ResponseEntity.badRequest().body("This statName is not implemented");
+        return ResponseEntity.ok(d);
+    }
 }

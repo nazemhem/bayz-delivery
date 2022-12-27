@@ -1,10 +1,7 @@
 package com.bayzdelivery.service;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import com.bayzdelivery.model.Courier;
 import com.bayzdelivery.model.enums.DeliveryStatus;
@@ -30,6 +27,24 @@ public class DeliveryServiceImpl implements DeliveryService {
         ArrayList<Delivery> deliveries = new ArrayList<>();
         deliveryRepository.findAll().forEach(deliveries::add);
         return deliveries;
+    }
+
+    @Override
+    public List<Delivery> getAllBetweenPeriod(Instant st, Instant et) {
+        return deliveryRepository.findAllBetweenPeriod(st, et);
+    }
+
+    @Override
+    public AbstractMap.SimpleEntry<String, String> getStat(String statName, Instant st, Instant et) {
+        List<Delivery> list;
+        if (st == null || et == null)
+            list = getAll();
+        else
+            list = getAllBetweenPeriod(st, et);
+        if (statName.equals("commission_avg")) {
+            return new AbstractMap.SimpleEntry<>("Average Commission", "" + list.stream().mapToDouble(Delivery::getCommission).average().orElse(-1));
+        }
+        return null;
     }
 
     public Delivery createNewDelivery(Delivery delivery) {
