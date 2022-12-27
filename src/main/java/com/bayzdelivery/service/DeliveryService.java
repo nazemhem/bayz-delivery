@@ -16,7 +16,9 @@ public interface DeliveryService {
 
     List<Delivery> getAll();
 
-    List<Delivery> getAllBetweenPeriod(Instant st, Instant et);
+    List<Delivery> checkDelayed();
+
+    List<Delivery> getBetweenPeriod(Instant st, Instant et);
 
     AbstractMap.SimpleEntry<String, String> getStat(String statName, Instant st, Instant et);
 

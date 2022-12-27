@@ -2,24 +2,27 @@ package com.bayzdelivery.service;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import com.bayzdelivery.jobs.DelayedDeliveryNotifier;
 import com.bayzdelivery.model.Courier;
 import com.bayzdelivery.model.enums.DeliveryStatus;
 import com.bayzdelivery.repositories.DeliveryRepository;
 import com.bayzdelivery.model.Delivery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import javax.swing.text.html.Option;
 
 @Service
 public class DeliveryServiceImpl implements DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
+    private final DelayedDeliveryNotifier notifier;
 
     @Autowired
-    public DeliveryServiceImpl(DeliveryRepository deliveryRepository) {
+    public DeliveryServiceImpl(DeliveryRepository deliveryRepository, DelayedDeliveryNotifier notifier) {
         this.deliveryRepository = deliveryRepository;
+        this.notifier = notifier;
     }
 
 
@@ -30,8 +33,20 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
-    public List<Delivery> getAllBetweenPeriod(Instant st, Instant et) {
-        return deliveryRepository.findAllBetweenPeriod(st, et);
+    @Scheduled(fixedDelay = 30000)
+    public List<Delivery> checkDelayed() {
+        List<Delivery> delayed = deliveryRepository.findDelayed();
+        if (delayed != null && delayed.size() > 0) {
+            System.out.println("Deliveries with ids: " +
+                    delayed.stream().mapToLong(Delivery::getId).boxed().collect(Collectors.toList()) + " are delayed. " + Thread.currentThread().getName());
+            notifier.notifyCustomerSupport();
+        }
+        return delayed;
+    }
+
+    @Override
+    public List<Delivery> getBetweenPeriod(Instant st, Instant et) {
+        return deliveryRepository.findBetweenPeriod(st, et);
     }
 
     @Override
@@ -40,7 +55,7 @@ public class DeliveryServiceImpl implements DeliveryService {
         if (st == null || et == null)
             list = getAll();
         else
-            list = getAllBetweenPeriod(st, et);
+            list = getBetweenPeriod(st, et);
         if (statName.equals("commission_avg")) {
             return new AbstractMap.SimpleEntry<>("Average Commission", "" + list.stream().mapToDouble(Delivery::getCommission).average().orElse(-1));
         }
